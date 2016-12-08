@@ -1,0 +1,26 @@
+{{#partial "content"}}
+    <ul>
+        {{#each blogEntry}}
+            <li>
+                <form action="/blog/{{ slug }}/vote" method="post">
+                    {{ title }} ( {{voteCount}} votes) <button>Vote</button>
+                </form>
+
+            </li>
+        {{/each}}
+    </ul>
+
+    <form action="/blog" method="post">
+        <input type="text" placeholder="What's your new Blog idea?" name="title" id="blogTitle">
+        <input type="text" placeholder="Your blog goes here." name="blog" id="txtbox">
+        <button>Blog it!</button>
+    </form>
+
+
+
+{{/partial}}
+
+
+
+
+{{> base.hbs}}
