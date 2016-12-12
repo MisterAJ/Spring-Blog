@@ -113,7 +113,7 @@ public class Main {
             String newComment = request.queryParams("comment");
             Comment comment = new Comment(user, newComment);
             dao.addComment(blogEntry, comment);
-            response.redirect("/blog/:slug/detail");
+            response.redirect("/blog");
             return null;
         });
 
@@ -122,7 +122,7 @@ public class Main {
         post("/sign-in", (request, response) -> {
             Map<String, String> model = new HashMap<>();
             String username = request.queryParams("username");
-            response.cookie("username", username);
+            response.cookie("/", "username", username, 3600, false);
             model.put("username", username);
             return new ModelAndView(model, "sign-in.hbs");
         }, new HandlebarsTemplateEngine());

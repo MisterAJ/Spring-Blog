@@ -2,19 +2,17 @@ package com.teamtreehouse.blog.model;
 
 import com.github.slugify.Slugify;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BlogEntry {
     private String slug;
     private String title;
     private String creator;
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
     private Set<String> voters;
     private String body;
     private boolean userCheck;
+    private Date dateCreated = new Date();
 
 
     public BlogEntry(String title, String creator, String body) {
@@ -22,6 +20,7 @@ public class BlogEntry {
         this.title = title;
         this.creator = creator;
         this.body = body;
+        this.dateCreated = new Date();
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
     }
@@ -34,8 +33,10 @@ public class BlogEntry {
         return creator;
     }
 
+
+
     public boolean addComment(Comment comment) {
-        this.comments.add(comment);
+        comments.add(comment);
         return false;
     }
 
@@ -83,5 +84,9 @@ public class BlogEntry {
 
     public boolean isUserCheck(String user) {
         return creator.equalsIgnoreCase(user);
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
     }
 }

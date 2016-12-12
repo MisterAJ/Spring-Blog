@@ -1,7 +1,9 @@
 {{#partial "content"}}
     <section>
-        <h1>{{ title }}</h1>
-        <p>{{body}}</p>
+        <h1>{{ blogEntry.title }}</h1>
+        <p>{{ blogEntry.dateCreated }}</p>
+        <p>{{ blogEntry.body }}</p>
+
         <form action="/blog/{{ blogEntry.slug }}/edit">
             <button>Edit</button>
         </form>
@@ -10,15 +12,15 @@
     <section class="entry-comments">
         <div class="container">
             <form action="/blog/{{ blogEntry.slug }}/comment" method="post">
-                <input placeholder="Comment here">
+                <input placeholder="Comment here" name="comment">
                 <button>Comment!</button>
             </form>
             <h2>Comments</h2>
             <ul>
-                {{#each blogEntry.comment}}
+                {{#each blogEntry.comments}}
                     <li>
-                        <h2> {{ blogEntry.creator }} </h2>
-                        <p> {{ blogEntry.comment}} </p>
+                        <h2> {{ creator }} </h2>
+                        <p> {{ comment }} </p>
                     </li>
                 {{/each}}
             </ul>
