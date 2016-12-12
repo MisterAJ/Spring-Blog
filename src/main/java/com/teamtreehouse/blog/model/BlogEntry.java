@@ -11,7 +11,7 @@ public class BlogEntry {
     private String slug;
     private String title;
     private String creator;
-    private List<Comment> comment;
+    private List<Comment> comments;
     private Set<String> voters;
     private String body;
     private boolean userCheck;
@@ -35,8 +35,12 @@ public class BlogEntry {
     }
 
     public boolean addComment(Comment comment) {
-        this.comment.add(comment);
+        this.comments.add(comment);
         return false;
+    }
+
+    public List<Comment> getComments(){
+        return comments;
     }
 
     public List<String> getVoters() {

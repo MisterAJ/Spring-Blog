@@ -1,10 +1,23 @@
-{{#partial "title"}} Signed In!! {{/partial}}
-{{#partial "head"}}<meta http-equiv="refresh" content="3;url=/" />{{/partial}}
+{{#partial "title"}} Sign In!! {{/partial}}
 
 {{#partial "content"}}
 
-    <h1>Welcome {{username}}!</h1>
-    <h2>Redirecting in 3 seconds...</h2>
+    <div class="container">
+
+        {{#if username }}
+            <h1>Welcome {{ username }}!</h1>
+        <form action="/blog" method="get">
+            <button>Proceed To Blog!</button>
+        </form>
+        {{ else }}
+            <h1>Welcome People!</h1>
+            <form action="/sign-in" method="post">
+                <input type="text" placeholder="What's your username?" name="username">
+                <button>Sign in</button>
+            </form>
+        {{/if}}
+    </div>
+
 
 {{/partial}}
 

@@ -1,4 +1,5 @@
 package com.teamtreehouse.blog;
+
 import com.teamtreehouse.blog.dao.BlogDao;
 import com.teamtreehouse.blog.dao.SimpleBlogDAO;
 import com.teamtreehouse.blog.model.BlogEntry;
@@ -18,14 +19,14 @@ public class Main {
         BlogDao dao = new SimpleBlogDAO();
 
         before((request, response) -> {
-            if (request.cookie("username") != null ) {
+            if (request.cookie("username") != null) {
                 request.attribute("username", request.cookie("username"));
             }
         });
 
         before("blog", (request, response) -> {
             // TODO - Make redirect message
-            if (request.attribute("username") == null ) {
+            if (request.attribute("username") == null) {
                 response.redirect("/");
                 halt();
             }
@@ -34,25 +35,11 @@ public class Main {
 
         // Main Page
 
-        get("/", (request, response) -> {
+        get("/sign-in", (request, response) -> {
             Map<String, String> user = new HashMap<>();
-            Map<String, Object> model = new HashMap<>();
             user.put("username", request.attribute("username"));
-            model.put("blogEntry", dao.findAllEntries());
-            return new ModelAndView(user, "index.hbs");
+            return new ModelAndView(user, "sign-in.hbs");
         }, new HandlebarsTemplateEngine());
-
-        post("/blog", (request, response) -> {
-            String title = request.queryParams("title");
-            String blog = request.queryParams("blogBody");
-            String creator = request.queryParams("username");
-            BlogEntry blogEntry = new BlogEntry(title, creator,blog);
-            dao.addEntry(blogEntry);
-            response.redirect("/blog");
-            return null;
-        });
-
-        // Blog Pages
 
         get("/blog", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
@@ -60,8 +47,26 @@ public class Main {
             return new ModelAndView(model, "blog.hbs");
         }, new HandlebarsTemplateEngine());
 
+        post("/blog", (request, response) -> {
+            String title = request.queryParams("title");
+            String blog = request.queryParams("blogBody");
+            String creator = request.queryParams("username");
+            BlogEntry blogEntry = new BlogEntry(title, creator, blog);
+            dao.addEntry(blogEntry);
+            response.redirect("/blog");
+            return null;
+        });
+
+        // Blog Pages
+
+        get("/", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("blogEntry", dao.findAllEntries());
+            return new ModelAndView(model, "index.hbs");
+        }, new HandlebarsTemplateEngine());
+
         get("/detail/:slug", (request, response) -> {
-            Map<String,Object> model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
             model.put("blogEntry", dao.findEntryBySlug(request.params("slug")));
             return new ModelAndView(model, "detail.hbs");
         }, new HandlebarsTemplateEngine());
@@ -72,7 +77,7 @@ public class Main {
 
         // Blog Changes
 
-        get( "/blog/:slug/edit", (request, response) -> {
+        get("/blog/:slug/edit", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("blogEntry", dao.findEntryBySlug(request.params("slug")));
             return new ModelAndView(model, "edit.hbs");
@@ -82,7 +87,7 @@ public class Main {
             String title = request.queryParams("title");
             String blog = request.queryParams("blogBody");
             String creator = request.queryParams("username");
-            BlogEntry blogEntry = new BlogEntry(title, creator,blog);
+            BlogEntry blogEntry = new BlogEntry(title, creator, blog);
             dao.editEntry(blogEntry);
             response.redirect("/blog");
             return null;
@@ -95,20 +100,20 @@ public class Main {
             return null;
         });
 
-        post("/blog/:slug/vote",(request, response) -> {
+        post("/blog/:slug/vote", (request, response) -> {
             BlogEntry blogEntry = dao.findEntryBySlug(request.params("slug"));
             blogEntry.addVoter(request.attribute("username"));
             response.redirect("/blog");
             return null;
         });
 
-        post("/blog/:slug/comment",(request, response) -> {
+        post("/blog/:slug/comment", (request, response) -> {
             BlogEntry blogEntry = dao.findEntryBySlug(request.params("slug"));
             String user = request.queryParams("username");
             String newComment = request.queryParams("comment");
             Comment comment = new Comment(user, newComment);
             dao.addComment(blogEntry, comment);
-            response.redirect("/detail/:slug");
+            response.redirect("/blog/:slug/detail");
             return null;
         });
 
@@ -126,7 +131,23 @@ public class Main {
             Map<String, String> model = new HashMap<>();
             String password = request.queryParams("password");
             model.put("password", password);
-            return new ModelAndView(model,"password.hbs");
+            return new ModelAndView(model, "password.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/d1", (request, response) -> {
+            return new ModelAndView(null, "d1.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/d2", (request, response) -> {
+            return new ModelAndView(null, "d2.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/d3", (request, response) -> {
+            return new ModelAndView(null, "d3.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/d4", (request, response) -> {
+            return new ModelAndView(null, "d4.hbs");
         }, new HandlebarsTemplateEngine());
     }
 }
