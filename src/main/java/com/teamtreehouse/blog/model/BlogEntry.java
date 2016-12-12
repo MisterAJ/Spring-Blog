@@ -14,6 +14,7 @@ public class BlogEntry {
     private List<Comment> comment;
     private Set<String> voters;
     private String body;
+    private boolean userCheck;
 
 
     public BlogEntry(String title, String creator, String body) {
@@ -74,5 +75,9 @@ public class BlogEntry {
 
     public String getBody() {
         return body;
+    }
+
+    public boolean isUserCheck(String user) {
+        return creator.equalsIgnoreCase(user);
     }
 }

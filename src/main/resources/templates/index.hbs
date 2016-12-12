@@ -12,12 +12,24 @@
                     <button>Sign in</button>
                 </form>
             {{/if}}
-            <div class="entry-list">
-                <a href="/blog">Click Here for Blog!</a>
-
-            </div>
         </div>
     </section>
+    <section>
+        <div class="entry-list">
+            <ul>
+                {{#each blogEntry}}
+                    <li>
+                        <h2>{{ title }}</h2>
+                        <p>{{ body }}</p>
+                        <form action="/blog/{{ slug }}/vote" method="post">
+                            <a href="/detail/{{slug}}"> {{ title }} </a>  ( {{voteCount}} votes) <button>Vote</button>
+                        </form>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+
 {{/partial}}
 
 {{> base.hbs}}

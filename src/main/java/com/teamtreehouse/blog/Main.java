@@ -2,6 +2,7 @@ package com.teamtreehouse.blog;
 import com.teamtreehouse.blog.dao.BlogDao;
 import com.teamtreehouse.blog.dao.SimpleBlogDAO;
 import com.teamtreehouse.blog.model.BlogEntry;
+import com.teamtreehouse.blog.model.Comment;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
@@ -29,12 +30,29 @@ public class Main {
                 halt();
             }
         });
+        // TODO - Post comments
+
+        // Main Page
 
         get("/", (request, response) -> {
             Map<String, String> user = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
             user.put("username", request.attribute("username"));
+            model.put("blogEntry", dao.findAllEntries());
             return new ModelAndView(user, "index.hbs");
         }, new HandlebarsTemplateEngine());
+
+        post("/blog", (request, response) -> {
+            String title = request.queryParams("title");
+            String blog = request.queryParams("blogBody");
+            String creator = request.queryParams("username");
+            BlogEntry blogEntry = new BlogEntry(title, creator,blog);
+            dao.addEntry(blogEntry);
+            response.redirect("/blog");
+            return null;
+        });
+
+        // Blog Pages
 
         get("/blog", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
@@ -48,6 +66,35 @@ public class Main {
             return new ModelAndView(model, "detail.hbs");
         }, new HandlebarsTemplateEngine());
 
+        get("/new", (request, response) -> {
+            return new ModelAndView(null, "new.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        // Blog Changes
+
+        get( "/blog/:slug/edit", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("blogEntry", dao.findEntryBySlug(request.params("slug")));
+            return new ModelAndView(model, "edit.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        post("/blog/:slug/edit", (request, response) -> {
+            String title = request.queryParams("title");
+            String blog = request.queryParams("blogBody");
+            String creator = request.queryParams("username");
+            BlogEntry blogEntry = new BlogEntry(title, creator,blog);
+            dao.editEntry(blogEntry);
+            response.redirect("/blog");
+            return null;
+        });
+
+        post("/blog/:slug/delete", (request, response) -> {
+            BlogEntry blogEntry = dao.findEntryBySlug(request.params("slug"));
+            dao.removeEntry(blogEntry);
+            response.redirect("/blog");
+            return null;
+        });
+
         post("/blog/:slug/vote",(request, response) -> {
             BlogEntry blogEntry = dao.findEntryBySlug(request.params("slug"));
             blogEntry.addVoter(request.attribute("username"));
@@ -55,20 +102,17 @@ public class Main {
             return null;
         });
 
-        post("/blog", (request, response) -> {
-            String title = request.queryParams("title");
-            String blog = request.queryParams("blogBody");
-            String creator = request.queryParams("username");
-            // TODO Make Blog not just list item
-            BlogEntry blogEntry = new BlogEntry(title, creator,blog);
-            dao.addEntry(blogEntry);
-            response.redirect("/blog");
+        post("/blog/:slug/comment",(request, response) -> {
+            BlogEntry blogEntry = dao.findEntryBySlug(request.params("slug"));
+            String user = request.queryParams("username");
+            String newComment = request.queryParams("comment");
+            Comment comment = new Comment(user, newComment);
+            dao.addComment(blogEntry, comment);
+            response.redirect("/detail/:slug");
             return null;
         });
 
-        get("/new.hbs", (request, response) -> {
-            return new ModelAndView(null, "new.hbs");
-        }, new HandlebarsTemplateEngine());
+        // Sign in
 
         post("/sign-in", (request, response) -> {
             Map<String, String> model = new HashMap<>();
